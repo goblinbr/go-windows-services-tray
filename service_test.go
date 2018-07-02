@@ -28,21 +28,21 @@ func TestItShoudNotHaveKryptonxkService(t *testing.T) {
 }
 
 func TestItShoudHaveLmhostsRunning(t *testing.T) {
-	status, err := GetServiceStatus("lmhosts")
+	state, err := GetServiceState("lmhosts")
 	if err != nil {
 		t.Error(err)
 	} else {
-		println("Status returned (lmhosts): ", status)
-		t.Logf("Status returned (lmhosts): %v", status)
+		println("State returned (lmhosts): ", state)
+		t.Logf("State returned (lmhosts): %v", state)
 	}
 }
 
 func TestItShoudHaveWuauservRunning(t *testing.T) {
-	status, err := GetServiceStatus("wuauserv")
+	state, err := GetServiceState("wuauserv")
 	if err != nil {
 		t.Error(err)
 	} else {
-		println("Status returned (wuauserv): ", status)
-		t.Logf("Status returned (wuauserv): %v", status)
+		println("State returned (wuauserv): ", state)
+		t.Logf("State returned (wuauserv): %v", state)
 	}
 }

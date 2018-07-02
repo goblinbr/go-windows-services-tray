@@ -8,12 +8,12 @@ import (
 	"golang.org/x/sys/windows/svc/mgr"
 )
 
-type WinService struct {
+type winService struct {
 	Manager *mgr.Mgr
 	Service *mgr.Service
 }
 
-func (m *WinService) Close() error {
+func (m *winService) Close() error {
 	return m.Manager.Disconnect()
 }
 
@@ -29,7 +29,7 @@ func HasService(name string) (bool, error) {
 	return service != nil, nil
 }
 
-func GetServiceStatus(name string) (svc.State, error) {
+func GetServiceState(name string) (svc.State, error) {
 	service, err := openService(name)
 	if service != nil {
 		defer service.Close()
@@ -45,7 +45,7 @@ func GetServiceStatus(name string) (svc.State, error) {
 	return status.State, nil
 }
 
-func openService(name string) (*WinService, error) {
+func openService(name string) (*winService, error) {
 	manager, err := mgr.Connect()
 	if err != nil {
 		return nil, err
@@ -56,5 +56,5 @@ func openService(name string) (*WinService, error) {
 		return nil, fmt.Errorf("could not access service: %v", err)
 	}
 
-	return &WinService{Manager: manager, Service: service}, nil
+	return &winService{Manager: manager, Service: service}, nil
 }
