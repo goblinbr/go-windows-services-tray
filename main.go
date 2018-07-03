@@ -42,31 +42,32 @@ func onReady() {
 	go monitorSystrayMenu(mQuit)
 }
 
-func verifyIfAllServicesAreRunning(services []string) bool {
+func verifyIfAllServicesAreRunning(services []string) (bool, error) {
 	for _, serviceName := range services {
 		state, err := GetServiceState(serviceName)
 		if err != nil {
 			println(err.Error())
-			return false
+			return false, err
 		} else if state != svc.Running {
-			return false
+			return false, nil
 		}
 	}
-	return true
+	return true, nil
 }
 
 func monitorServices(services []string) {
 	allServicesAreRunning := false
-	setIconAndTitleNotOk()
-
+	setIconAndTitleNotOk(textServicesNotRunning)
 	for {
-		allRunning := verifyIfAllServicesAreRunning(services)
-		if allServicesAreRunning != allRunning {
+		allRunning, err := verifyIfAllServicesAreRunning(services)
+		if err != nil {
+			setIconAndTitleNotOk("Error: " + err.Error() + "\nVerify if it's running with administrator privileges!")
+		} else if allServicesAreRunning != allRunning {
 			allServicesAreRunning = allRunning
 			if allServicesAreRunning {
 				setIconAndTitleOk()
 			} else {
-				setIconAndTitleNotOk()
+				setIconAndTitleNotOk(textServicesNotRunning)
 			}
 		}
 
@@ -74,10 +75,10 @@ func monitorServices(services []string) {
 	}
 }
 
-func setIconAndTitleNotOk() {
+func setIconAndTitleNotOk(text string) {
 	systray.SetIcon(getIcon(iconServicesNotRunning))
-	systray.SetTitle(textServicesNotRunning)
-	systray.SetTooltip(textServicesNotRunning)
+	systray.SetTitle(text)
+	systray.SetTooltip(text)
 }
 
 func setIconAndTitleOk() {
